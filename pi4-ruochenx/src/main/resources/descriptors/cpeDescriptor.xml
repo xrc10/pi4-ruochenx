@@ -9,7 +9,7 @@
                 <nameValuePair>
                     <name>InputDir</name>
                     <value>
-                        <string>/home/ruochenx/git/pi4-ruochenx/pi4-ruochenx/src/main/resources/inputData</string>
+                        <string>src/main/resources/inputData</string>
                     </value>
                 </nameValuePair>
             </configurationParameterSettings>
@@ -43,7 +43,7 @@
             <nameValuePair>
                 <name>OutputDir</name>
                 <value>
-                    <string>/home/ruochenx/git/pi4-ruochenx/pi4-ruochenx/src/main/resources/outputData</string>
+                    <string>src/main/resources/outputData</string>
                 </value>
             </nameValuePair>
         </configurationParameterSettings>
