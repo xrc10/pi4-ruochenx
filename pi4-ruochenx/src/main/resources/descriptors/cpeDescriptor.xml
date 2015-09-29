@@ -5,6 +5,14 @@
             <descriptor>
                 <import location="collectionReaderDescriptor.xml"/>
             </descriptor>
+            <configurationParameterSettings>
+                <nameValuePair>
+                    <name>InputDir</name>
+                    <value>
+                        <string>/home/ruochenx/git/pi4-ruochenx/pi4-ruochenx/src/main/resources/inputData</string>
+                    </value>
+                </nameValuePair>
+            </configurationParameterSettings>
         </collectionIterator>
     </collectionReader>
     <casProcessors casPoolSize="3" processingUnitThreadCount="1">

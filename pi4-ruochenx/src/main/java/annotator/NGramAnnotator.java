@@ -15,6 +15,7 @@ import type.Token;
 import type.Ngram;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 public class NGramAnnotator extends JCasAnnotator_ImplBase {
@@ -32,30 +33,46 @@ public class NGramAnnotator extends JCasAnnotator_ImplBase {
     Iterator inputDocumentIterator = inputDocumentIndex.iterator();
     while (inputDocumentIterator.hasNext()) {
       InputDocument inputDocumentAnnot = (InputDocument) inputDocumentIterator.next();
+      // build and sort Token arrayList
+      FSIndex tokenIndex = aJCas.getAnnotationIndex(Token.type);
+      Iterator tokenIterator = tokenIndex.iterator();
+      ArrayList<Token> tokenArray = new ArrayList<Token>();
+      while (tokenIterator.hasNext()) {
+        tokenArray.add((Token) tokenIterator.next());
+      }
+      Collections.sort(tokenArray);
+      
       FSArray questions = inputDocumentAnnot.getQuestions();
       // question n-grams
       for (int i = 0; i < questions.size(); i++) {
         Question questionAnnot = (Question) questions.get(i);
-        nGramAnnotator(questionAnnot, aJCas);
+        nGramAnnotator(questionAnnot, aJCas, tokenArray);
       }
       // passages n-grams
       FSArray passages = inputDocumentAnnot.getPassages();
       for (int i = 0; i < passages.size(); i++) {
         Passage answerAnnot = (Passage) passages.get(i);
-        nGramAnnotator(answerAnnot, aJCas);
+        nGramAnnotator(answerAnnot, aJCas, tokenArray);
       }
     }
   }
 
-  public void nGramAnnotator(Annotation annot, JCas jCas) {
-    FSIndex tokenIndex = jCas.getAnnotationIndex(Token.type);
-    Iterator tokenIterator = tokenIndex.iterator();
+  public void nGramAnnotator(Annotation annot, JCas jCas, ArrayList<Token> allTokenArray) {
     ArrayList<Token> tokenList = new ArrayList<Token>();
     // find tokens inside annot
-    while (tokenIterator.hasNext()) {
-      Token token = (Token) tokenIterator.next();
+    int k = 0;
+    int findTokenFlag = 0;
+    while(k < allTokenArray.size())
+    {
+      Token token = allTokenArray.get(k);
       if (inAnnot(token, annot)) {
+        findTokenFlag = 1;
         tokenList.add(token);
+        allTokenArray.remove(k);
+      } else if(findTokenFlag == 1) {
+        break;
+      } else {
+        k++;
       }
     }
     for (int i = 0; i < tokenList.size() - numberOfNGram + 1; i++) {

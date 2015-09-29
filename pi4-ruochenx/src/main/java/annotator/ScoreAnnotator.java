@@ -14,6 +14,7 @@ import type.Ngram;
 import type.Passage;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 public class ScoreAnnotator extends JCasAnnotator_ImplBase {
@@ -28,6 +29,14 @@ public class ScoreAnnotator extends JCasAnnotator_ImplBase {
       score.setBegin(0);
       score.setEnd(aJCas.getDocumentText().length());
       InputDocument inputDocumentAnnot = (InputDocument) inputDocumentIterator.next();
+      // build and sort NGram arrayList
+      ArrayList<Ngram> nGramArray = new ArrayList<Ngram>();
+      FSIndex nGramIndex = aJCas.getAnnotationIndex(Ngram.type);
+      Iterator nGramIterator = nGramIndex.iterator();
+      while (nGramIterator.hasNext()) {
+        nGramArray.add((Ngram) nGramIterator.next());
+      }
+      Collections.sort(nGramArray);
       // find questions
       FSArray questions = inputDocumentAnnot.getQuestions();
       FSArray scoreQuestions = new FSArray(aJCas, questions.size());
@@ -35,14 +44,14 @@ public class ScoreAnnotator extends JCasAnnotator_ImplBase {
         Question questionAnnot = (Question) questions.get(i);
         Question scoreQuestionAnnot = (Question) questionAnnot.clone();
         scoreQuestionAnnot.setComponentId(this.getClass().getName());
-        ArrayList<Ngram> questionNGramList = findNGram(aJCas, questionAnnot);
+        ArrayList<Ngram> questionNGramList = findNGram(aJCas, questionAnnot, nGramArray);
         // find answers
         FSArray passages = questionAnnot.getPassages();
         FSArray scorePassages = new FSArray(aJCas, passages.size());
         for (int j = 0; j < passages.size(); j++) {
           Passage passageAnnot = (Passage) passages.get(j);
           Passage scorePassageAnnot = (Passage) passageAnnot.clone();
-          ArrayList<Ngram> passageNGramList = findNGram(aJCas, passageAnnot);
+          ArrayList<Ngram> passageNGramList = findNGram(aJCas, passageAnnot, nGramArray);
           double simScore = computeNGramScore(aJCas, questionNGramList, passageNGramList);
           scorePassageAnnot.setScore(simScore);
           scorePassageAnnot.setComponentId(this.getClass().getName());
@@ -56,14 +65,21 @@ public class ScoreAnnotator extends JCasAnnotator_ImplBase {
     }
   }
 
-  public ArrayList<Ngram> findNGram(JCas aJCas, Annotation annot) {
+  public ArrayList<Ngram> findNGram(JCas aJCas, Annotation annot, ArrayList<Ngram> allNgramArray) {
     ArrayList<Ngram> nGramList = new ArrayList<Ngram>();
-    FSIndex nGramIndex = aJCas.getAnnotationIndex(Ngram.type);
-    Iterator nGramIterator = nGramIndex.iterator();
-    while (nGramIterator.hasNext()) {
-      Ngram ngram = (Ngram) nGramIterator.next();
-      if (inAnnot(ngram, annot)) {
-        nGramList.add(ngram);
+    int k = 0;
+    int findTokenFlag = 0;
+    while(k < allNgramArray.size())
+    {
+      Ngram nGram = allNgramArray.get(k);
+      if (inAnnot(nGram, annot)) {
+        findTokenFlag = 1;
+        nGramList.add(nGram);
+        allNgramArray.remove(k);
+      } else if(findTokenFlag == 1) {
+        break;
+      } else {
+        k++;
       }
     }
     return nGramList;
