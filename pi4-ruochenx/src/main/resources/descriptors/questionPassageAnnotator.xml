@@ -4,7 +4,7 @@
   <primitive>true</primitive>  <annotatorImplementationName>annotator.QuestionPassageAnnotator</annotatorImplementationName>
   <analysisEngineMetaData>
     <name>Question Passage Annotator</name>
-    <description/>
+    <description>Reads input document and output a InputDocument type annotation. This annotator is able to identify and record the question and answers with  labels. The implementation mainly relies on Java regular expression (java.util.regex).</description>
     <version>1.0</version>
     <vendor/>
     <configurationParameters/>
