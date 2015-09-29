@@ -19,12 +19,12 @@ public class Main {
     // component.
 
     // Edit the following code to get the input and output directories from a command line.
-    String inputDir = null;
-    String outputDir = null;
+    String inputDir = args[0];
+    String outputDir = args[1];
 
     // Instantiate CPE.
     CpeDescription cpeDesc = UIMAFramework.getXMLParser()
-            .parseCpeDescription(new XMLInputSource("src/main/resources/cpeDescriptor.xml"));
+            .parseCpeDescription(new XMLInputSource("src/main/resources/descriptors/cpeDescriptor.xml"));
     CollectionProcessingEngine mCPE = UIMAFramework.produceCollectionProcessingEngine(cpeDesc);
 
     // Configure your collection reader with the given input directory. The code below assumes that

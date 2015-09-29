@@ -1,65 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <analysisEngineDescription xmlns="http://uima.apache.org/resourceSpecifier">
   <frameworkImplementation>org.apache.uima.java</frameworkImplementation>
-  <primitive>false</primitive>  
-  <delegateAnalysisEngineSpecifiers>
-    <delegateAnalysisEngine key="questionPassageAnnotator">
-      <import name="descriptors.questionPassageAnnotator"/>
-    </delegateAnalysisEngine>
-    <delegateAnalysisEngine key="tokenAnnotator">
-      <import name="descriptors.tokenAnnotator"/>
-    </delegateAnalysisEngine>
-    <delegateAnalysisEngine key="nGramAnnotator">
-      <import name="descriptors.nGramAnnotator"/>
-    </delegateAnalysisEngine>
-  <delegateAnalysisEngine key="scoreAnnotator">
-      <import name="descriptors.scoreAnnotator"/>
-    
-    </delegateAnalysisEngine>
-  </delegateAnalysisEngineSpecifiers>
+  <primitive>true</primitive>  <annotatorImplementationName>annotator.NGramAnnotator</annotatorImplementationName>
   <analysisEngineMetaData>
-    <name>aaeDescriptor</name>
-    <description>This is a template (empty) descriptor for your Aggerate Analysis Engine.  You will need to specify your type system and capabilities, in addition to your individual analysis engines.</description>
+    <name>NGram Annotator</name>
+    <description>Reads InputDocument and Token  type annotation. With parameter NumberOfNGram indicating the length of n-grams, this annotator extracts tokens with specific length within sentence.</description>
     <version>1.0</version>
     <vendor/>
-    <configurationParameters searchStrategy="language_fallback">
+    <configurationParameters>
       <configurationParameter>
         <name>NumberOfNGram</name>
         <description>The number of grams the annotator will use for n-gram annotation.</description>
         <type>Integer</type>
         <multiValued>false</multiValued>
         <mandatory>true</mandatory>
-        <overrides>
-          <parameter>nGramAnnotator/NumberOfNGram</parameter>
-        </overrides>
       </configurationParameter>
     </configurationParameters>
     <configurationParameterSettings>
       <nameValuePair>
         <name>NumberOfNGram</name>
         <value>
-          <integer>1</integer>
+          <integer>3</integer>
         </value>
       </nameValuePair>
     </configurationParameterSettings>
-    <flowConstraints>
-      <fixedFlow>
-        <node>questionPassageAnnotator</node>
-        <node>tokenAnnotator</node>
-        <node>nGramAnnotator</node>
-      <node>scoreAnnotator</node>
-      </fixedFlow>
-    </flowConstraints>
+    <typeSystemDescription>
+      <imports>
+        <import name="descriptors.typeSystem"/>
+      </imports>
+    </typeSystemDescription>
     <typePriorities/>
     <fsIndexCollection/>
     <capabilities>
       <capability>
-        <inputs/>
-        <outputs>
+        <inputs>
           <type allAnnotatorFeatures="true">type.Token</type>
           <type allAnnotatorFeatures="true">type.InputDocument</type>
+        </inputs>
+        <outputs>
           <type allAnnotatorFeatures="true">type.Ngram</type>
-        <type allAnnotatorFeatures="true">type.Score</type>
         </outputs>
         <languagesSupported/>
       </capability>
